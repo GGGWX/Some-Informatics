@@ -31,18 +31,18 @@ def get_info(url):
 
             team = selector.xpath(
                 fixed_path + '[' + str(i) + ']/td[2]/a/text()')
-            if not team:
-                continue
             team = team[0]
 
             salary = selector.xpath(
                 fixed_path + '[' + str(i) + ']/td[3]/text()')
-            if not salary:
-                continue
             salary = salary[0][1:].replace(',', '')
 
             writer.writerow((player, team, salary))
     finally:
         f.close()
 
-get_info(basicURL)
+def main():
+    get_info(basicURL)
+
+if __name__ == "__main__":
+    main()
