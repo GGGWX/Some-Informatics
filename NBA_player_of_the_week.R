@@ -9,18 +9,17 @@ library(reshape2)
 library(lubridate)
 library(viridis)
 
-#df <- read.csv('../NBA_player_of_the_week.csv', sep=',', stringAsFactors=FALSE)
-df<-read.csv('./NBA_player_of_the_week.csv', sep=',', stringsAsFactors=F)
+df <- read.csv('./input/NBA_player_of_the_week.csv', sep=',', stringsAsFactors=F)
 
-east_teams <- (df %>% filter(Conference == 'East') %>% distinct(Team))$Team
-west_teams <- (df %>% filter(Conference == 'West') %>% distinct(Team))$Team
+eastTeams <- (df %>% filter(Conference == 'East') %>% distinct(Team))$Team
+westTeams <- (df %>% filter(Conference == 'West') %>% distinct(Team))$Team
 
 missingConference <- function(conf, team){
   if(conf == ''){
-    if(team %in% east_teams | team == 'Washington Bullets'){
+    if(team %in% eastTeams | team == 'Washington Bullets'){
       return('East')
     }
-    else if(team %in% west_teams | team == 'Washington Bullets'){
+    else if(team %in% westTeams | team == 'Washington Bullets'){
       return('West')
     }
   }
@@ -29,9 +28,9 @@ missingConference <- function(conf, team){
   }
 }
 
-df$Conference_2 <- mapply(missingConference, df$Conference, df$Team)
+df$newConference <- mapply(missingConference, df$Conference, df$Team)
 
-heightNum <- function(x){
+getHeight <- function(x){
   if(grepl('cm', x) == TRUE){
     return(as.numeric(gsub('cm', '', x)))
   }
@@ -42,7 +41,7 @@ heightNum <- function(x){
   }
 }
 
-weightNum <- function(x){
+getWeight <- function(x){
   if(grepl('kg', x) == TRUE){
     return(as.numeric(gsub('kg', '', x)))
   }
@@ -51,9 +50,9 @@ weightNum <- function(x){
   }
 }
 
-df$Height2 <- sapply(df$Height, heightNum)
-df$Weight2 <- sapply(df$Weight, weightNum)
-df$BMI <- df$Weight2 / ((df$Height2 / 100) * (df$Height2 / 100))
+df$newHeight <- sapply(df$Height, getHeight)
+df$newWeight <- sapply(df$Weight, getWeight)
+df$BMI <- df$newWeight / ((df$newHeight / 100) * (df$newHeight / 100))
 
 
 pos <- c("PG", "SG", "F", "C", "SF", "PF", "G", "FC", "GF", "F-C", "G-F")
@@ -74,40 +73,78 @@ date <- function(x){
   return(paste0(current_year, '-', current_month, '-', current_day))
 }
 
-df$Date2 <- sapply(df$Date, date)
-df$Date2 <- as.Date(df$Date2)
-df$week <- as.integer(format(df$Date2, "%W")) + 1
-df$day <- factor(weekdays(df$Date2, T), levels = rev(c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")))
-df$month_num <- month(df$Date2)
+df$newDate <- sapply(df$Date, date)
+df$newDate <- as.Date(df$newDate)
+df$week <- as.integer(format(df$newDate, "%W")) + 1
+df$day <- factor(weekdays(df$newDate, T), levels = rev(c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")))
+df$month_num <- month(df$newDate)
 df$month_name <- sapply(df$month_num, function(x) month.abb[x])
 
-left_join(df %>% rename('HEIGHT(cm)' = Height2,
-                        'WEIGHT(kg)' = Weight2) %>%
-            select(position_name, 'HEIGHT(cm)', 'WEIGHT(kg)', BMI) %>%
-            group_by(position_name) %>%
-            reshape2::melt(id='position_name'),
-          COLOR, by='position_name') %>%
-  ggplot(aes(x = reorder(position_name, value, FUN = mean), y = value)) + 
-  geom_boxplot(aes(fill = colors)) +
-  theme_fivethirtyeight(12) +
-  theme(legend.position = 'None',
-        strip.text = element_text(size = 10, face = 'bold')) +
-  scale_fill_identity() + facet_wrap(~variable, ncol = 1, scales = 'free')
 
-left_join(
-  df %>% group_by(Season.short, position_name) %>% summarise(meanHeight = mean(Height2)), 
-  COLOR, by='position_name') %>% 
-  ggplot(aes(x=Season.short, y= meanHeight, group=position_name)) + 
-  geom_line(aes(color=colors),alpha=.75, size=2) + geom_point(size=2) + 
-  theme_fivethirtyeight(12) +
-  geom_smooth(aes(group=position_name),
-              method='loess',alpha=.2,color='black',size=.25) +
-  facet_wrap(~position_name) + scale_color_identity() +
-  theme(strip.text = element_text(size = 10, face="bold")) + 
-  labs(title='average Height over time per Position',
-       subtitle='')
+# 
+# left_join(df %>% rename('HEIGHT(cm)' = newHeight,
+#                         'WEIGHT(kg)' = newWeight) %>%
+#             select(position_name, 'HEIGHT(cm)', 'WEIGHT(kg)', BMI) %>%
+#             group_by(position_name) %>%
+#             reshape2::melt(id='position_name'),
+#           COLOR, by='position_name') %>%
+#   ggplot(aes(x = reorder(position_name, value, FUN = mean), y = value)) +
+#   geom_boxplot(aes(fill = colors)) +
+#   theme_fivethirtyeight(12) +
+#   theme(legend.position = 'None',
+#         strip.text = element_text(size = 10, face = 'bold')) +
+#   scale_fill_identity() + facet_wrap(~variable, ncol = 1, scales = 'free')
 
+# left_join(
+#   df %>% group_by(Season.short, position_name) %>% summarise(meanHeight = mean(newHeight)),
+#   COLOR, by='position_name') %>%
+#   ggplot(aes(x=Season.short, y= meanHeight, group=position_name)) +
+#   geom_line(aes(color=colors),alpha=.75, size=1) + geom_point(size=1) +
+#   theme_fivethirtyeight(12) +
+#   geom_smooth(aes(group=position_name),
+#               method='loess',alpha=.2,color='black',size=.25) +
+#   facet_wrap(~position_name) + scale_color_identity() +
+#   theme(strip.text = element_text(size = 10, face="bold")) +
+#   labs(title='average Height over time per Position',
+#        subtitle='')
 
+# left_join(
+#   df %>% group_by(Season.short, position_name) %>% summarise(meanBMI = mean(BMI)), 
+#   COLOR, by='position_name') %>% 
+#   ggplot(aes(x=Season.short, y= meanBMI, group=position_name)) + 
+#   geom_line(aes(color=colors),alpha=.75, size=2) + geom_point(size=2) + 
+#   theme_fivethirtyeight(12) +
+#   geom_smooth(aes(group=position_name),
+#               method='loess',alpha=.2,color='black',size=.25) +
+#   facet_wrap(~position_name) + scale_color_identity() +
+#   theme(strip.text = element_text(size = 10, face="bold")) + 
+#   labs(title='average BMI over time per Position',
+#        subtitle='')
 
+# unique_players <- df[!duplicated(df$Player), c('Player', 'position_name')]
+# 
+# left_join(
+#   left_join(
+#     df %>% select(newHeight, newWeight, BMI, position_name, Player) %>%
+#       group_by(Player) %>%
+#       summarise(
+#         count=n(),
+#         meanHeight = mean(newHeight),
+#         meanWeight = mean(newWeight),
+#         meanBMI = mean(BMI)) %>% arrange(-count),
+#     unique_players, by='Player'),
+#   COLOR, by='position_name') %>%
+#   ggplot(aes(x=meanHeight, y=meanWeight)) +
+#   geom_jitter(aes(color=colors, size=count), alpha = 0.5, width = 0.8, height = 0.8) +
+#   theme_fivethirtyeight(12) + theme(legend.position = 'top') +
+#   scale_color_identity(name = '',
+#                        guide = "legend",
+#                        labels = COLOR$position_name,
+#                        breaks = COLOR$colors) +
+#   geom_smooth(method = 'loess', alpha = 0.2, size = 1.5, color = 'gray') +
+#   geom_label_repel(aes(label = ifelse(count >= 19, Player, ''),
+#                        color = colors), force = 10, show.legend = F) +
+#   labs(title = 'Weight & Height for the weekly award players', subtitle = 'size of point represents the over all number of weekly award')
+# 
 
 
