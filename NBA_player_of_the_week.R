@@ -81,6 +81,8 @@ df$month_num <- month(df$newDate)
 df$month_name <- sapply(df$month_num, function(x) month.abb[x])
 
 
+
+
 # 
 # left_join(df %>% rename('HEIGHT(cm)' = newHeight,
 #                         'WEIGHT(kg)' = newWeight) %>%
@@ -147,4 +149,41 @@ df$month_name <- sapply(df$month_num, function(x) month.abb[x])
 #   labs(title = 'Weight & Height for the weekly award players', subtitle = 'size of point represents the over all number of weekly award')
 # 
 
+# df %>% group_by(newConference, Season.short, Real_value) %>% 
+#   summarise(count = sum(Real_value)) %>% 
+#   mutate(newCount = ifelse(newConference == 'East', 1*count, -1*count)) %>%
+#   ggplot(aes(x = Season.short, y = newCount)) + 
+#   geom_histogram(aes(fill = newConference), stat = 'identity', color = 'white') + 
+#   theme_fivethirtyeight(16) + scale_fill_manual(name = '', values = c('#87CEFF', '#EE2C2C')) + 
+#   scale_x_continuous(breaks = seq(1985,2018, by = 5)) + 
+#   scale_y_continuous(breaks = seq(-20,20,5), labels = abs) + 
+#   labs(title = 'number of weekly awards in East & West', subtitle = '')
+
+custom_weeks <- c(38,42,46,50,1,5,9,13,17,21)
+season_months <- c("Sept", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "June")
+
+makeWeeklyChart <- function(player_name){
+  temp <- df %>% filter(Player == player_name) %>% 
+    group_by(Season.short,month_name,week,day) %>% summarize(week_count=n())
+  temp$week <- factor(temp$week)
+  temp$week <- factor(temp$week, levels = c(seq(40,52),seq(1,22)))
+  temp$month_name <- as.factor(temp$month_name)
+  temp$month_name <- factor(temp$month_name, levels = season_months)
+  pal='B'
+  ggplot(temp, aes(x = week, y = day, fill = week_count)) + 
+    scale_fill_viridis(name = "count", 
+                       option = pal,  # Variable color palette
+                       direction = -1,  # Variable color direction
+                       na.value = "grey93",
+                       limits = c(0, max(temp$week_count))) +
+    geom_tile(color = "white", size = 0.5) +
+    facet_wrap("Season.short", ncol = 1) +
+    scale_x_discrete(breaks = custom_weeks, labels = season_months) +
+    theme_fivethirtyeight() +
+    theme(axis.text.y = element_text(size=6),
+          legend.position = "None",legend.direction='horizontal',
+          legend.key.width = unit(0.5, "cm"),
+          strip.text = element_text(hjust = 0, face = "bold", size = 8)) + 
+    ggtitle(paste0(player_name,'\'s weekly award'))
+}
 
