@@ -23,7 +23,11 @@ def get_info(url):
 
 def get_content(url):
     selector = etree.HTML(get_html(url))
-    title = selector.xpath('/html/body/div[5]/div[1]/span/text()')[0]
+    title = selector.xpath('/html/body/div[5]/div[1]/span/text()')
+    if not title:
+        title = 'page not found'
+    else:
+        title = title[0]
     diagnosis = selector.xpath('/html/body/div[5]/div[2]/div[5]/p[2]/text()')
     if not diagnosis:
         diagnosis = '无'
@@ -32,7 +36,7 @@ def get_content(url):
     return title, diagnosis
 
 if __name__ == "__main__":
-    for n in range (1, 31):
+    for n in range (19, 20):
         url = 'https://www.chunyuyisheng.com/pc/search/qalist/?query=%E6%88%92%E7%83%9F&page=' + str(n)
         get_info(url)
         time.sleep(1)
