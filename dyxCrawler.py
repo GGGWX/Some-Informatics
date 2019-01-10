@@ -10,10 +10,6 @@ writer.writerow(('title', 'author', 'when', 'reply', 'click', 'rate', 'content')
 
 basicURL = 'http://www.dxy.cn/bbs/board/106?order=1'
 
-fixed_path = '//*[@id="col-1"]/table[3]/tbody/tr'
-
-urls=[] 
-
 # know nothing about python crawler, but chrome is a good tool to analyze xml
 # and fortunately i learned xml, so use xml to write a crawler
 # (regex looks like disaster). I have to say dxy is a website with weird structure
@@ -29,9 +25,9 @@ def get_info(url):
     selector = etree.HTML(get_html(url))
 # maybe there should exist a try-catch block, i dismiss it
     for i in range(1, 36):
-        title_span = selector.xpath(fixed_path + '[' + str(i) + ']/td[2]/a[last()]/span/text()')
-        title_span_span = selector.xpath(fixed_path + '[' + str(i) + ']/td[2]/a[2]/span/span/text()')
-        title_a = selector.xpath(fixed_path + '[' + str(i) + ']/td[2]/a[last()]/text()')
+        title_span = selector.xpath('//*[@id="col-1"]/table[3]/tbody/tr[' + str(i) + ']/td[2]/a[last()]/span/text()')
+        title_span_span = selector.xpath('//*[@id="col-1"]/table[3]/tbody/tr[' + str(i) + ']/td[2]/a[2]/span/span/text()')
+        title_a = selector.xpath('//*[@id="col-1"]/table[3]/tbody/tr[' + str(i) + ']/td[2]/a[last()]/text()')
         if not title_span:
             if not title_span_span:
                 title = title_a[0]
@@ -39,14 +35,13 @@ def get_info(url):
                 title = title_span_span[0]
         else:
             title = title_span[0]
-        author = selector.xpath(fixed_path + '[' + str(i) + ']/td[3]/a/text()')[0]
-        when = selector.xpath(fixed_path + '[' + str(i) + ']/td[3]/em/text()')[0]
-        reply = int(selector.xpath(fixed_path + '[' + str(i) + ']/td[4]/a/text()')[0])
-        click = int(selector.xpath(fixed_path + '[' + str(i) + ']/td[4]/em/text()')[0])
+        author = selector.xpath('//*[@id="col-1"]/table[3]/tbody/tr[' + str(i) + ']/td[3]/a/text()')[0]
+        when = selector.xpath('//*[@id="col-1"]/table[3]/tbody/tr[' + str(i) + ']/td[3]/em/text()')[0]
+        reply = int(selector.xpath('//*[@id="col-1"]/table[3]/tbody/tr[' + str(i) + ']/td[4]/a/text()')[0])
+        click = int(selector.xpath('//*[@id="col-1"]/table[3]/tbody/tr[' + str(i) + ']/td[4]/em/text()')[0])
         reply_rate = reply/click
         rate = round(reply_rate, 8) #取8位有效数字 个人感觉精确度已经够了
-        post_url = selector.xpath(fixed_path + '[' + str(i) + ']/td[2]/a[last()]/@href')[0]
-        urls.append(post_url)
+        post_url = selector.xpath('//*[@id="col-1"]/table[3]/tbody/tr[' + str(i) + ']/td[2]/a[last()]/@href')[0]
         content = get_content(post_url)
         writer.writerow((title, author, when, reply, click, rate, content))
 
