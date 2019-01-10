@@ -1,7 +1,6 @@
 import time
 import requests
-import csv, codecs
-import lxml
+import csv
 from lxml import etree
 
 f = open("../dxyhl.csv", "w+", encoding="utf-8-sig")
