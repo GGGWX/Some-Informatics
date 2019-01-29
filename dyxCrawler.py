@@ -64,4 +64,4 @@ if __name__ == "__main__":
     for n in range(1, 10):
         url = basicURL + '&tpg=' + str(n)
         get_info(url)
-        time.sleep(1)# whatever, connot afford a proxy ip
+        time.sleep(1)
