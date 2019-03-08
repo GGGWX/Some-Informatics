@@ -5,7 +5,7 @@ import numpy as np
 import random
 from lxml import etree
 
-f = open("../yahoo_answers_quit_smoking.csv", "a+", encoding="utf-8-sig")
+f = open("../yahoo_answers_stop_smoking.csv", "a+", encoding="utf-8-sig")
 writer = csv.writer(f)
 writer.writerow(('title', 'when', 'reply', 'description'))
 
@@ -37,12 +37,12 @@ def get_content(url):
     return description
 
 if __name__ == "__main__":
-    number_list = list(set(np.random.randint(1, 101, size=1500).tolist()))
+    number_list = list(set(np.random.randint(0, 101, size=1500).tolist()))
     random.shuffle(number_list)
+    # print(number_list)
+    # print(len(number_list))
     while len(number_list):
         n = number_list.pop() * 10 + 1
         print(n)
-        get_info('https://answers.search.yahoo.com/search;_ylt=AwrXoCCRV1BcT3MAXypPmolQ;_ylu=X3oDMTFhOWY4YTJzBGNvbG8DZ3ExBHBvcwMxBHZ0aWQDQjI1NTdfMQRzZWMDcGFnaW5hdGlvbg--?p=quit+smoking&pz=10&type=2button&fr=uh3_answers_vert_gs&b=' + str(n) + '&pz=10&bct=0&xargs=0')
+        get_info('https://answers.search.yahoo.com/search;_ylt=AwrXgSOqmVFcWX4A9XRPmolQ;_ylu=X3oDMTFhOWY4YTJzBGNvbG8DZ3ExBHBvcwMxBHZ0aWQDQjI1NTdfMQRzZWMDcGFnaW5hdGlvbg--?p=stop+smoking&pz=10&type=2button&fr=uh3_answers_vert_gs&fr2=sb-top-answers.search&bct=0&b=' + str(n) + '&pz=10&bct=0&xargs=0')
         time.sleep(5)
-
-    
