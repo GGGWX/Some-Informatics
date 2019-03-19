@@ -17,7 +17,7 @@ options.add_argument('--headless')
 
 browser = webdriver.Chrome(chrome_options=options)
 
-f = open("ziroom_2.csv", "w+", encoding="utf-8-sig")
+f = open("ziroom.csv", "w+", encoding="utf-8-sig")
 writer = csv.writer(f)
 writer.writerow(('url', 'price'))
 
@@ -34,7 +34,7 @@ def get_image(html):
     return num
 
 def get_html(html, page):
-    headers={'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'}
+    # headers={'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'}
     url = html + '?p=' + str(page)
     # req = requests.get(url = url,headers = headers).text
     # return req
@@ -64,6 +64,7 @@ def get_info(html, num_list):
         for number in temp_list:
             price = num_list[int(int(number) / 30)]
             # print(price)
+            # dont know why tesseract cannot judge number 7
             if price == '/':
                 price = '7'
             if price =='(':
@@ -79,7 +80,7 @@ if __name__ == "__main__":
     # time.sleep(1)
     print('')
     url = 'http://www.ziroom.com/z/nl/z1.html'
-    for i in range (31, 51):
+    for i in range (1, 51):
         print("正在爬取第" + str(i) + "页")
         html = get_html(url, i)
         # print(html)
