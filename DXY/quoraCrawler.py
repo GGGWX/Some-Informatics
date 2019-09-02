@@ -107,8 +107,8 @@ def getQuestion(html):
 
 def main():
     getQuestion(webaddress)    
-    user = "gggwx6198@gmail.com"
-    password = "wsmzdwy61"
+    user = "xxx"
+    password = "xxx"
     login(user, password)
     #Zhihu()
     # str = ' '
