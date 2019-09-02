@@ -25,14 +25,6 @@ def get_html(str):
     req = requests.get(url = str, headers = headers).text
     return req
 
-# //*[@id="threadlisttableid"]
-# //*[@id="normalthread_460632"]/tr/th/a[3]
-# /html/body/div[7]/div[5]/div/div/div[4]/div[2]/form/table/tbody[2]/tr/th/a[3]
-# /html/body/div[7]/div[5]/div/div/div[4]/div[2]/form/table/tbody[31]/tr/th/a[2]
-# /html/body/div[7]/div[5]/div/div/div[4]/div[2]/form/table/tbody[32]/tr/th/a[3]
-# /html/body/div[7]/div[5]/div/div/div[4]/div[2]/form/table/tbody[2]/tr/th/a[3]
-
-
 def get_info(url):
     selector = etree.HTML(get_html(url))
     for i in range(32,38):
@@ -51,8 +43,6 @@ def get_info(url):
 
         writer.writerow((title, link, time, click, reply, author))
 
-
-
 def login(account, password):
     driver = webdriver.Firefox(executable_path='/usr/local/bin/geckodriver')
 
@@ -68,7 +58,7 @@ def login(account, password):
     driver.get("http://www.keai99.com/forum.php?mod=forumdisplay&fid=36&orderby=lastpost&orderby=lastpost&filter=lastpost&page=95")
 
     time.sleep(1)
-    # 94面没爬完
+    # 94面没爬完 有个标题有坑
 
 
     count = 95
@@ -96,8 +86,8 @@ def login(account, password):
         count = count + 1
 
 if __name__ == "__main__":
-    user = '252895817@qq.com'
-    password = 'wsmzdwy61'
+    user = 'xxx'
+    password = 'xxx'
     # login(user, password)
     testurl = 'http://www.keai99.com/forum.php?mod=forumdisplay&fid=36&orderby=lastpost&orderby=lastpost&filter=lastpost&page=94'
     get_info(testurl)
