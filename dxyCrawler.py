@@ -9,11 +9,9 @@ writer.writerow(('title', 'author', 'when', 'reply', 'click', 'rate', 'content')
 
 basicURL = 'http://www.dxy.cn/bbs/board/106?order=1'
 
-# know nothing about python crawler, but chrome is a good tool to analyze xml
-# and fortunately i learned xml, so use xml to write a crawler
-# (regex looks like disaster). I have to say dxy is a website with weird structure
-# spend much time on it, finally it worked fine. I hope that if someday i become a
-# front-end programmer, the structure must be limpid for others to read.
+# seems that the board has change its structure
+# 
+# deprecated code
 
 def get_html(str):
     headers={'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36', }
