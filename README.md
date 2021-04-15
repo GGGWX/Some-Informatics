@@ -1,5 +1,5 @@
 # For informatics
 
 FINISHED
-and PAPER ACCEPTED
-working on ANOTHER ONE
+with PAPER ACCEPTED
+and working on ANOTHER ONE
