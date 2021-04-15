@@ -1,6 +1,5 @@
 # For informatics
 
-## TODO
-
-BERT
-
+FINISHED
+and PAPER ACCEPTED
+working on ANOTHER ONE
